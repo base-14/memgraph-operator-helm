@@ -6,7 +6,7 @@ replicaCount: 1
 image:
   repository: base14/memgraph-operator
   pullPolicy: IfNotPresent
-  tag: "latest"
+  tag: "0.1.0"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -72,10 +72,6 @@ metrics:
 nodeSelector: {}
 tolerations: []
 affinity: {}
-
-# Install CRDs with the chart
-# Set to false if CRDs are managed separately
-installCRDs: true
 
 # RBAC configuration
 rbac:
