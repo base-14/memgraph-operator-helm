@@ -1,0 +1,44 @@
+Memgraph Operator has been installed!
+
+1. Verify the operator is running:
+
+   kubectl get pods -n {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "memgraph-operator.name" . }}"
+
+2. Create a MemgraphCluster:
+
+   cat <<EOF | kubectl apply -f -
+   apiVersion: memgraph.base14.io/v1alpha1
+   kind: MemgraphCluster
+   metadata:
+     name: my-cluster
+     namespace: default
+   spec:
+     replicas: 3
+     image: memgraph/memgraph:2.21.0
+     storage:
+       size: 10Gi
+     replication:
+       mode: ASYNC
+   EOF
+
+3. Check cluster status:
+
+   kubectl get memgraphclusters
+
+4. Connect to Memgraph:
+
+   # Write queries (connects to MAIN instance)
+   kubectl port-forward svc/my-cluster-write 7687:7687
+
+   # Read queries (load-balanced across replicas)
+   kubectl port-forward svc/my-cluster-read 7688:7687
+
+{{- if .Values.metrics.enabled }}
+
+5. Access metrics:
+
+   kubectl port-forward -n {{ .Release.Namespace }} svc/{{ include "memgraph-operator.fullname" . }}-metrics {{ .Values.metrics.port }}:{{ .Values.metrics.port }}
+   curl http://localhost:{{ .Values.metrics.port }}/metrics
+{{- end }}
+
+For more information, visit: https://github.com/base14/memgraph-operator
