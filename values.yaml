@@ -4,10 +4,9 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/base14/memgraph-operator
+  repository: base14/memgraph-operator
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion
-  tag: ""
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""
