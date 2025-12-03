@@ -6,7 +6,7 @@ replicaCount: 1
 image:
   repository: base14/memgraph-operator
   pullPolicy: IfNotPresent
-  tag: "0.1.0"
+  tag: "0.1.2"
 
 imagePullSecrets: []
 nameOverride: ""
