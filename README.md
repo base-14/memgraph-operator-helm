@@ -12,20 +12,20 @@ A Helm chart for deploying the Memgraph Kubernetes Operator, which manages Memgr
 ### Add the Helm repository
 
 ```bash
-helm repo add base14 https://base14.github.io/charts
+helm repo add memgraph-operator https://base-14.github.io/memgraph-operator-helm
 helm repo update
 ```
 
 ### Install the chart
 
 ```bash
-helm install memgraph-operator base14/memgraph-operator -n memgraph-system --create-namespace
+helm install memgraph-operator memgraph-operator/memgraph-operator -n memgraph-system --create-namespace
 ```
 
 ### Install from source
 
 ```bash
-git clone https://github.com/base14/memgraph-operator
+git clone https://github.com/base-14/memgraph-operator-helm
 cd memgraph-operator-helm
 helm install memgraph-operator . -n memgraph-system --create-namespace
 ```
@@ -149,7 +149,7 @@ kubectl delete crd memgraphclusters.memgraph.base14.io
 
 ## Links
 
-- [Memgraph Operator Source](https://github.com/base14/memgraph-operator)
+- [Memgraph Operator Source](https://github.com/base-14/memgraph-operator)
 - [Memgraph Documentation](https://memgraph.com/docs)
 
 ## License

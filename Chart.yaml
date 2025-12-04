@@ -10,13 +10,13 @@ version: 0.1.0
 # Operator version
 appVersion: "0.1.0"
 
-home: https://github.com/base14/memgraph-operator
+home: https://github.com/base-14/memgraph-operator
 sources:
-  - https://github.com/base14/memgraph-operator
+  - https://github.com/base-14/memgraph-operator
 
 maintainers:
   - name: Base14
-    url: https://github.com/base14
+    url: https://github.com/base-14
 
 keywords:
   - memgraph
