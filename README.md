@@ -12,7 +12,7 @@ A Helm chart for deploying the Memgraph Kubernetes Operator, which manages Memgr
 ### Add the Helm repository
 
 ```bash
-helm repo add memgraph-operator https://base-14.github.io/memgraph-operator-helm
+helm repo add memgraph-operator https://memgraph-operator.base14.io
 helm repo update
 ```
 

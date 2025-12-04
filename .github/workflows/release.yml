@@ -35,7 +35,7 @@ jobs:
 
           # Move packaged chart and update index
           mv ../memgraph-operator-*.tgz . 2>/dev/null || mv memgraph-operator-*.tgz . 2>/dev/null || true
-          helm repo index . --url https://base-14.github.io/memgraph-operator-helm
+          helm repo index . --url https://memgraph-operator.base14.io
 
           # Commit and push
           git add .
