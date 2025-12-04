@@ -1,0 +1,26 @@
+apiVersion: v1
+entries:
+  memgraph-operator:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2025-12-04T15:59:36.368918468Z"
+    description: A Helm chart for deploying the Memgraph Kubernetes Operator
+    digest: 180dbdcf7801d4a2db0c5f583903c3f291f2120452de83a3b049b5afb4d8f1d5
+    home: https://github.com/base-14/memgraph-operator
+    keywords:
+    - memgraph
+    - graph-database
+    - operator
+    - kubernetes
+    kubeVersion: '>=1.26.0-0'
+    maintainers:
+    - name: Base14
+      url: https://github.com/base-14
+    name: memgraph-operator
+    sources:
+    - https://github.com/base-14/memgraph-operator
+    type: application
+    urls:
+    - https://github.com/base-14/memgraph-operator-helm/releases/download/memgraph-operator-0.1.0/memgraph-operator-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-12-04T15:59:36.36892515Z"
