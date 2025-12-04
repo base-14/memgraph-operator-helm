@@ -9,6 +9,7 @@ jobs:
   release:
     permissions:
       contents: write
+      pages: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,10 +25,13 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v4
 
-      - name: Run chart-releaser
+      - name: Package chart
+        run: |
+          helm package . -d .cr-release-packages
+
+      - name: Run chart-releaser upload
         uses: helm/chart-releaser-action@v1.6.0
         with:
-          charts_dir: .
-          skip_packaging: false
+          skip_packaging: true
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
