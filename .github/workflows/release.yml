@@ -9,7 +9,6 @@ jobs:
   release:
     permissions:
       contents: write
-      pages: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,27 +24,20 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v4
 
-      - name: Create gh-pages branch if not exists
+      - name: Package and publish chart
         run: |
-          if ! git ls-remote --heads origin gh-pages | grep -q gh-pages; then
-            git checkout --orphan gh-pages
-            git rm -rf .
-            echo "# Helm Chart Repository" > README.md
-            git add README.md
-            git commit -m "Initialize gh-pages branch"
-            git push origin gh-pages
-            git checkout main
-          fi
+          # Package the chart
+          helm package .
 
-      - name: Package chart
-        run: |
-          helm package . -d .cr-release-packages
+          # Checkout gh-pages branch
+          git fetch origin gh-pages:gh-pages || git checkout --orphan gh-pages
+          git checkout gh-pages
 
-      - name: Run chart-releaser upload
-        uses: helm/chart-releaser-action@v1.7.0
-        with:
-          skip_packaging: true
-          skip_existing: true
-          mark_as_latest: false
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          # Move packaged chart and update index
+          mv ../memgraph-operator-*.tgz . 2>/dev/null || mv memgraph-operator-*.tgz . 2>/dev/null || true
+          helm repo index . --url https://base-14.github.io/memgraph-operator-helm
+
+          # Commit and push
+          git add .
+          git commit -m "Release chart" || echo "No changes to commit"
+          git push origin gh-pages
