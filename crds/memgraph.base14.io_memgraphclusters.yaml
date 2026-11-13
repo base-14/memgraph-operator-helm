@@ -970,6 +970,20 @@ spec:
               config:
                 description: Config defines Memgraph-specific configuration
                 properties:
+                  extraArgs:
+                    items:
+                      maxLength: 512
+                      type: string
+                    maxItems: 64
+                    type: array
+                    x-kubernetes-validations:
+                    - message: extraArgs entries must start with '--' and carry their
+                        value as --name=value
+                      rule: self.all(a, a.startsWith('--'))
+                    - message: 'extraArgs must not set flags managed by the operator:
+                        data-directory, bolt-port, bolt-address, management-port,
+                        coordinator-*'
+                      rule: '!self.exists(a, a.matches(''^--(data-directory|bolt-port|bolt-address|management-port|coordinator-[a-z-]+)(=.*)?$''))'
                   logLevel:
                     default: WARNING
                     description: LogLevel sets the Memgraph log level
@@ -983,6 +997,25 @@ spec:
                   memoryLimit:
                     default: 3000
                     description: MemoryLimit sets the memory limit in MB for Memgraph
+                    format: int32
+                    type: integer
+                  snapshotIntervalSec:
+                    description: |-
+                      SnapshotIntervalSec sets the periodic snapshot interval in seconds
+                      (Memgraph --storage-snapshot-interval-sec). Set to 0 to disable periodic
+                      snapshots entirely. If nil, Memgraph's built-in default (300s) is used.
+                      Pointer so that 0 (disabled) is distinguishable from unset.
+                    format: int32
+                    type: integer
+                  snapshotOnExit:
+                    description: |-
+                      SnapshotOnExit controls whether Memgraph takes a snapshot on shutdown
+                      (--storage-snapshot-on-exit). If nil, Memgraph's default is used.
+                    type: boolean
+                  snapshotRetentionCount:
+                    description: |-
+                      SnapshotRetentionCount sets how many periodic snapshots Memgraph keeps on
+                      disk (--storage-snapshot-retention-count). If nil, Memgraph's default is used.
                     format: int32
                     type: integer
                   walFlushEveryNTx:
@@ -1034,6 +1067,19 @@ spec:
               replication:
                 description: Replication defines the replication settings
                 properties:
+                  behindAlertThreshold:
+                    default: 5m
+                    description: |-
+                      BehindAlertThreshold is the duration a replica may stay behind the main
+                      before being reported as unhealthy. Defaults to 5m. Must be greater than 0.
+                      Pointer so that an unset field is omitted and picks up the default, rather
+                      than serializing as "0s" (metav1.Duration is a struct, so omitempty alone
+                      would not omit its zero value).
+                    type: string
+                    x-kubernetes-validations:
+                    - message: behindAlertThreshold must be a positive Go duration
+                        (e.g. '5m', '30s'); zero and negative values are not allowed
+                      rule: '!self.startsWith("-") && self != "0s"'
                   mode:
                     default: ASYNC
                     description: Mode is the replication mode (ASYNC, SYNC, STRICT_SYNC)
@@ -1125,9 +1171,31 @@ spec:
               snapshot:
                 description: Snapshot defines snapshot and backup configuration
                 properties:
+                  activeDeadlineSeconds:
+                    default: 600
+                    description: |-
+                      ActiveDeadlineSeconds is the maximum time a snapshot job may run before it is
+                      marked failed and its pods terminated. Without it, a job whose pod can never be
+                      scheduled stays Active forever and blocks every later run under Forbid.
+                    format: int64
+                    minimum: 60
+                    type: integer
+                  concurrencyPolicy:
+                    default: Forbid
+                    description: |-
+                      ConcurrencyPolicy controls what happens when a snapshot job is still running
+                      at the next scheduled tick. Forbid skips the tick, which is safe because it
+                      prevents overlapping CREATE SNAPSHOT runs.
+                    enum:
+                    - Allow
+                    - Forbid
+                    - Replace
+                    type: string
                   enabled:
                     default: true
-                    description: Enabled enables periodic snapshots
+                    description: |-
+                      Enabled enables periodic snapshots. Set to false to disable them and remove
+                      the snapshot CronJob.
                     type: boolean
                   retentionCount:
                     default: 5
@@ -1183,6 +1251,15 @@ spec:
                     default: '*/15 * * * *'
                     description: Schedule is a cron expression for snapshot frequency
                     type: string
+                  startingDeadlineSeconds:
+                    default: 300
+                    description: |-
+                      StartingDeadlineSeconds bounds how far back the CronJob controller looks for
+                      missed schedules. Without it, more than 100 missed starts permanently disables
+                      scheduling with "too many missed start times".
+                    format: int64
+                    minimum: 10
+                    type: integer
                 type: object
               storage:
                 description: Storage defines the persistent storage configuration
