@@ -5,10 +5,10 @@ description: A Helm chart for deploying the Memgraph Kubernetes Operator
 type: application
 
 # Chart version - increment on chart changes
-version: 0.2.1
+version: 0.3.0
 
 # Operator version
-appVersion: "0.4.1"
+appVersion: "0.5.0"
 
 home: https://github.com/base-14/memgraph-operator
 sources:
